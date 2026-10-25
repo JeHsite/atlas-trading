@@ -1,0 +1,33 @@
+# Risk limits — deterministic, enforced on every trade proposal.
+# Percentages are of current account equity (base currency).
+
+# Circuit breakers: no new trades for the rest of the day / until manual reset
+max_daily_loss_pct: 2.0
+max_drawdown_pct: 10.0
+
+# Per trade
+max_risk_per_trade_pct: 0.5      # loss at stop as % of equity
+max_position_pct: 10.0
+min_reward_risk: 1.5             # to first target
+min_confidence: 55
+max_entry_deviation_pct: 3.0     # proposed entry vs last price
+min_order_value_base: 100
+
+# Exposure
+max_gross_exposure_pct: 150
+max_net_exposure_pct: 100
+max_sector_pct: 25
+max_country_pct: 70
+max_asset_class_pct:
+  equity: 100
+  etf: 100
+  bond: 60
+  crypto: 15
+  fx: 30
+
+# Liquidity
+min_avg_daily_value_base: 1000000
+max_spread_bps: 30
+max_participation_pct: 1.0
+
+allow_short: true

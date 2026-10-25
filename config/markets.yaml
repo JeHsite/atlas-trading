@@ -1,0 +1,29 @@
+# Trading venues. `calendar` is either an exchange_calendars code, or one of:
+#   custom       – hours and holidays defined here
+#   always_open  – 24/7 (crypto)
+#   fx           – Sunday 17:00 to Friday 17:00 America/New_York
+venues:
+  XNYS: {calendar: XNYS}
+  XNAS: {calendar: XNAS}
+  XLON: {calendar: XLON}
+  XETR: {calendar: XETR}
+  XPAR: {calendar: XPAR}
+  XHKG: {calendar: XHKG}
+  XSHG: {calendar: XSHG}
+
+  # The exchange_calendars XTAE calendar fails to build in v4.13 (the exchange
+  # moved to a Monday-Friday week in 2026), so TASE is defined here.
+  # VERIFY hours and holidays against tase.co.il before trading.
+  XTAE:
+    calendar: custom
+    tz: Asia/Jerusalem
+    hours:
+      mon: ["09:59", "17:25"]
+      tue: ["09:59", "17:25"]
+      wed: ["09:59", "17:25"]
+      thu: ["09:59", "17:25"]
+      fri: ["09:59", "14:00"]
+    holidays: []   # ISO dates, e.g. "2026-09-21"
+
+  CRYPTO: {calendar: always_open}
+  FX: {calendar: fx}
