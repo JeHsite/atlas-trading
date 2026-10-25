@@ -68,6 +68,7 @@ CREATE TABLE trade_proposals (
     symbol       TEXT NOT NULL REFERENCES instruments(symbol),
     direction    TEXT NOT NULL CHECK (direction IN ('long','short')),
     horizon      TEXT NOT NULL,
+    setup        TEXT NOT NULL DEFAULT 'discretionary',
     proposal     JSONB NOT NULL,
     llm_call_id  BIGINT REFERENCES llm_calls(id)
 );
@@ -123,3 +124,28 @@ CREATE TABLE equity_snapshots (
     equity_base DOUBLE PRECISION NOT NULL,
     positions   JSONB NOT NULL
 );
+
+-- Learning layer: one post-mortem per closed trade
+CREATE TABLE trade_reviews (
+    proposal_id     BIGINT PRIMARY KEY REFERENCES trade_results(proposal_id),
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    setup           TEXT NOT NULL,
+    asset_class     TEXT NOT NULL,
+    thesis_correct  TEXT NOT NULL CHECK (thesis_correct IN ('yes','partly','no')),
+    mistake         TEXT NOT NULL,
+    lesson          TEXT NOT NULL CHECK (length(lesson) <= 300),
+    llm_call_id     BIGINT REFERENCES llm_calls(id)
+);
+
+-- Per-domain track record (setup x asset class)
+CREATE VIEW setup_stats AS
+SELECT p.setup,
+       i.asset_class,
+       count(*)                                         AS trades,
+       avg((r.pnl_base > 0)::int)                       AS win_rate,
+       avg(r.r_multiple)                                AS avg_r,
+       sum(r.r_multiple) / (count(*) + 20)              AS shrunk_r
+FROM trade_results r
+JOIN trade_proposals p ON p.id = r.proposal_id
+JOIN instruments i ON i.symbol = p.symbol
+GROUP BY p.setup, i.asset_class;

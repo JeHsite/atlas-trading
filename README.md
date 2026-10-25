@@ -23,6 +23,21 @@
 | סכמת מסד נתונים | `db/schema.sql` |
 | פרומפט האנליסט | `prompts/analyst_system.md` |
 
+## שלב 2
+
+| רכיב | קובץ |
+|---|---|
+| אינדיקטורים (SMA, EMA, RSI, ATR, Donchian, MACD, Bollinger) | `src/atlas/indicators.py` |
+| שתי אסטרטגיות בסיס: פריצת ערוץ, ותיקון בתוך מגמה | `src/atlas/strategies.py` |
+| ברוקר מדומה עם עמלות, ספרד והחלקה | `src/atlas/paper.py` |
+| backtest, בדיוק לפי אותם כללים של חשבון הדמו | `src/atlas/backtest.py` |
+| מערכת למידה אחרי כל עסקה | `src/atlas/learning.py` |
+| פרופיל חשבון הדמו (1,000 ₪) | `config/account.yaml` |
+
+```bash
+uv run atlas backtest data/SPY_1d.csv --symbol SPY --strategy rsi_pullback
+```
+
 ## הרצה
 
 ```bash

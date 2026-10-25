@@ -1,0 +1,32 @@
+# Demo account: experimental bot, paper trading only.
+mode: paper
+starting_equity: 1000
+equity_currency: ILS
+# ILS -> USD. Replace with the live rate once a data provider is connected.
+fx_to_base: 0.27
+target_demo_trades: 1000
+
+# Phase-1 universe: US stocks and crypto. Other venues stay in markets.yaml and
+# are switched on by adding them here.
+venues: [XNYS, XNAS, CRYPTO]
+
+# Cost profile used by the paper broker. Placeholder values — VERIFY against the
+# broker's real price list before judging results. With a ~270 USD account a
+# per-order minimum commission dominates everything else.
+costs:
+  equity:
+    commission_per_unit: 0.005
+    commission_min: 1.0
+    spread_bps: 5
+    slippage_bps: 5
+  crypto:
+    commission_pct: 0.1
+    spread_bps: 5
+    slippage_bps: 5
+
+learning:
+  prior_trades: 20
+  min_trades: 30
+  reduce_below_r: 0.0
+  disable_below_r: -0.15
+  reduced_multiplier: 0.5

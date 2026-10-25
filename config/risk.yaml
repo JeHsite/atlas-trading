@@ -1,5 +1,6 @@
 # Risk limits — deterministic, enforced on every trade proposal.
 # Percentages are of current account equity (base currency).
+# Profile: 1,000 ILS demo account (~270 USD), US stocks + crypto.
 
 # Circuit breakers: no new trades for the rest of the day / until manual reset
 max_daily_loss_pct: 2.0
@@ -11,7 +12,7 @@ max_position_pct: 10.0
 min_reward_risk: 1.5             # to first target
 min_confidence: 55
 max_entry_deviation_pct: 3.0     # proposed entry vs last price
-min_order_value_base: 100
+min_order_value_base: 5        # small account: allow small orders
 
 # Exposure
 max_gross_exposure_pct: 150
@@ -31,3 +32,6 @@ max_spread_bps: 30
 max_participation_pct: 1.0
 
 allow_short: true
+# Fractional units make sizing possible on a small account. Check the real
+# broker supports fractional shares before going live.
+fractional_asset_classes: [equity, etf, crypto, fx]

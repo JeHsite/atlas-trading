@@ -10,12 +10,16 @@ requires-python = ">=3.12"
 dependencies = [
     "exchange-calendars>=4.13.2",
     "httpx>=0.28.1",
+    "pandas>=3.1.0",
     "psycopg[binary]>=3.3.6",
     "pydantic>=2.14.1",
     "pydantic-settings>=2.16.1",
     "pyyaml>=6.0.3",
     "sqlalchemy>=2.1.6",
 ]
+
+[project.scripts]
+atlas = "atlas.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.11.32,<0.12.0"]

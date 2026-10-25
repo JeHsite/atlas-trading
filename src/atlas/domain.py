@@ -20,10 +20,6 @@ class AssetClass(StrEnum):
     FX = "fx"
 
 
-# Asset classes that can be traded in fractional units.
-FRACTIONAL_ASSET_CLASSES = frozenset({AssetClass.CRYPTO, AssetClass.FX})
-
-
 class Direction(StrEnum):
     LONG = "long"
     SHORT = "short"
@@ -83,6 +79,11 @@ class TradeProposal(BaseModel):
     targets: list[float] = Field(min_length=1)
     confidence: int = Field(ge=0, le=100)
     thesis: str = Field(min_length=1)
+    setup: str = Field(
+        default="discretionary",
+        min_length=1,
+        description="Strategy/setup name; the learning layer keeps statistics per setup",
+    )
     catalyst: str | None = None
     invalidation: str | None = None
     key_risks: list[str] = Field(default_factory=list)

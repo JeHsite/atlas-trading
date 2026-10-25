@@ -14,7 +14,6 @@ import yaml
 from pydantic import BaseModel, Field
 
 from atlas.domain import (
-    FRACTIONAL_ASSET_CLASSES,
     AssetClass,
     Direction,
     MarketSnapshot,
@@ -51,6 +50,9 @@ class RiskLimits(BaseModel):
     )
 
     allow_short: bool = True
+    fractional_asset_classes: set[AssetClass] = Field(
+        default_factory=lambda: {AssetClass.CRYPTO, AssetClass.FX}
+    )
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> RiskLimits:
@@ -77,9 +79,15 @@ def evaluate(
     limits: RiskLimits,
     *,
     kill_switch: bool = False,
+    risk_multiplier: float = 1.0,
 ) -> RiskDecision:
+    """``risk_multiplier`` comes from the learning layer. It is clamped to
+    [0, 1], so learning can shrink or block a setup but never enlarge it."""
     if kill_switch:
         return _reject("kill switch is active")
+    risk_multiplier = min(1.0, max(0.0, risk_multiplier))
+    if risk_multiplier == 0:
+        return _reject(f"setup '{proposal.setup}' is disabled by the learning layer")
 
     halts = []
     if portfolio.day_pnl_pct <= -limits.max_daily_loss_pct:
@@ -122,6 +130,7 @@ def evaluate(
     caps: dict[str, float] = {
         "risk per trade": equity
         * limits.max_risk_per_trade_pct
+        * risk_multiplier
         / 100
         / (proposal.risk_per_unit * fx)
         * unit_value,
@@ -164,11 +173,13 @@ def evaluate(
         )
 
     binding, max_value = min(caps.items(), key=lambda kv: kv[1])
+    if risk_multiplier < 1:
+        adjustments.append(f"risk reduced to {risk_multiplier:.0%} by the learning layer")
     if binding != "risk per trade" and max_value < caps["risk per trade"]:
         adjustments.append(f"size reduced by {binding} limit")
 
     quantity = max(0.0, max_value) / unit_value
-    if inst.asset_class not in FRACTIONAL_ASSET_CLASSES:
+    if inst.asset_class not in limits.fractional_asset_classes:
         quantity = math.floor(quantity)
     order_value = quantity * unit_value
 

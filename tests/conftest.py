@@ -18,7 +18,17 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @pytest.fixture
 def limits() -> RiskLimits:
-    return RiskLimits.from_yaml(ROOT / "config" / "risk.yaml")
+    # Fixed reference limits for engine tests, independent of the demo account
+    # profile in config/risk.yaml.
+    return RiskLimits(
+        max_asset_class_pct={
+            AssetClass.EQUITY: 100,
+            AssetClass.ETF: 100,
+            AssetClass.BOND: 60,
+            AssetClass.CRYPTO: 15,
+            AssetClass.FX: 30,
+        }
+    )
 
 
 @pytest.fixture
