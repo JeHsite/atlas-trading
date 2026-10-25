@@ -44,6 +44,6 @@ lessons that are fed back into prompts; lessons never change limits.
    (still to do: walk-forward validation, data adapter for US stocks + crypto)
 3. LLM analysis layer (screening, earnings, central-bank speeches, macro, daily report)
 4. Signal fusion + portfolio construction
-5. Paper execution (IBKR paper, crypto testnet), reconciliation
+5. Live demo loop on the internal paper broker (real-time data), Telegram alerts for manual trades
 6. Dashboard, Telegram alerts, Hebrew reports, cost monitor
 7. Hardening and monitoring
